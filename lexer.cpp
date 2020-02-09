@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -19,7 +21,9 @@ int main() {
 	ifstream sourceCode;
 	sourceCode.open("sourceCode.txt");
 	string line;
+	string::iterator i;
 	while (!sourceCode.eof()) {
+		getline(sourceCode, line);
 	}
 
 
