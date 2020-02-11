@@ -27,6 +27,8 @@ int main() {
 	// set of operators
 	vector<char> operators = {'+', '*', '-','/', '=', '>', '<', '%'};
 
+	vector<string> lexemes;
+
 	cout << "TOKEN\t\t\tLEXEME" << endl << endl;
 
 	ifstream sourceCode;
@@ -35,13 +37,17 @@ int main() {
 	string identifier = "";
 	string number = "";
 	string type;
-	while (!sourceCode.eof()) {
-		getline(sourceCode, line);
+
+	// parse file for tokens/lexemes
+	while (getline(sourceCode, line)) {
+	
 		for (string::iterator i = line.begin(); i != line.end(); i++) {
+			
 			// checks if character is alphabetic
 			if (isalpha(*i)) {
 				identifier = identifier + *i;
 			}
+
 			// checks if character is a digit
 			else if (isdigit(*i)) {
 				if (identifier.compare("") == 0) {
@@ -61,6 +67,8 @@ int main() {
 					if (identifier.compare("") != 0) {
 						 
 						 type = "IDENTIFIER";
+
+						 // search for keyword match
 						 for (vector<string>::iterator k = keywords.begin(); k != keywords.end(); k++) {
 							 if (identifier.compare(*k) == 0) {
 								 type = "KEYWORD\t";
@@ -70,15 +78,27 @@ int main() {
 						 printStringToken(type, identifier);
 	                                         identifier = "";
 					}
+
 					// method to print number when separator is found
 					else if (number.compare("") != 0) {
-						
-						type = "INTEGER\t";
-						printStringToken(type, number);
+
+						// checks for real vs integer number
+						if (*i == '.') {
+							type = "REAL\t";
+							number = number + *i;
+						}
+						else {
+							if (type.compare("REAL\t") != 0) {
+								type = "INTEGER\t";
+							}
+							printStringToken(type, number);
+							number = "";
+						}
 					
 					}
-					type = "SEPARATOR";
-					if (*i != ' ') {
+					// checks for spaces and if we are parsing a real number
+					if (*i != ' ' && type.compare("REAL\t") != 0) {
+						type = "SEPARATOR";
 						printCharToken(type, *i);
 					}
 				}
@@ -92,6 +112,8 @@ int main() {
 					if (identifier.compare("") != 0) {
                                                 
                                                  type = "IDENTIFIER";
+
+						 // search for keyword match
                                                  for (vector<string>::iterator k = keywords.begin(); k != keywords.end(); k++) {
                                                          if (identifier.compare(*k) == 0) {
                                                                  type = "KEYWORD\t";
@@ -106,6 +128,7 @@ int main() {
 
                                                 type = "INTEGER\t";
                                                 printStringToken(type, number);
+						number = "";
 
                                         }
 
