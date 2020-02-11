@@ -93,6 +93,7 @@ int main() {
 							}
 							printStringToken(type, number);
 							number = "";
+							type = "";
 						}
 					
 					}
@@ -137,7 +138,6 @@ int main() {
 				}
 			}
 		}
-		cout << endl;
 	}
 
 	return 0;
