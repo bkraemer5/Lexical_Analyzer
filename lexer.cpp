@@ -27,7 +27,7 @@ int main() {
 	// set of operators
 	vector<char> operators = {'+', '*', '-','/', '=', '>', '<', '%'};
 
-	cout << "TOKEN\t\t\t\tLEXEME" << endl << endl;
+	cout << "TOKEN\t\t\tLEXEME" << endl << endl;
 
 	ifstream sourceCode;
 	sourceCode.open("sourceCode.txt");
@@ -66,6 +66,7 @@ int main() {
 								 type = "KEYWORD\t";
 							 }
 						 }
+						 
 						 printStringToken(type, identifier);
 	                                         identifier = "";
 					}
@@ -77,7 +78,9 @@ int main() {
 					
 					}
 					type = "SEPARATOR";
-					printCharToken(type, *i);
+					if (*i != ' ') {
+						printCharToken(type, *i);
+					}
 				}
 			}
 
@@ -118,10 +121,10 @@ int main() {
 }
 
 void printStringToken(string key, string lex) {
-	cout << key << "\t\t=\t" << lex << endl;
+	cout << key << "\t=\t" << lex << endl;
 }
 
 void printCharToken(string key, char lex) {
-	cout << key << "\t\t=\t" << lex << endl;
+	cout << key << "\t=\t" << lex << endl;
 }
 
