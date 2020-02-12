@@ -57,6 +57,9 @@ int main() {
 					identifier = identifier + *i;
 				}
 			}
+			else if (*i == '!') {
+				i = line.end()-1;
+			}
 
 			// checks if character is a separator
 			// this ends up resetting the identifier
