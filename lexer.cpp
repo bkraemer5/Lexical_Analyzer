@@ -29,8 +29,6 @@ int main() {
 	// set of operators
 	vector<char> operators = {'+', '*', '-','/', '=', '>', '<', '%'};
 
-	vector<string> lexemes;
-
 	cout << "TOKEN\t\t\tLEXEME" << endl << endl;
 
 	ifstream sourceCode;
@@ -39,10 +37,11 @@ int main() {
 	string identifier = "";
 	string number = "";
 	string type;
+	string tokens = "";
 
 	// parse file for tokens/lexemes
 	while (getline(sourceCode, line)) {
-	
+		tokens = tokens + line;
 		for (string::iterator i = line.begin(); i != line.end(); i++) {
 			
 			// checks if character is alphabetic
@@ -145,6 +144,8 @@ int main() {
 		}
 	}
 
+
+
 	return 0;
 }
 
@@ -158,6 +159,70 @@ void printCharToken(string key, char lex) {
 
 bool fsm(string s) {
 
+	// implementation of FSM table
+	int fsmTable[14][12] = {2, 4, 6, 14, 8, 14, 10, 14, 12, 14, 1, 14,
+		2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		5, 4, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		8, 8, 8, 8, 8, 9, 8, 8, 8, 8, 8, 8,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		10, 10, 10, 10, 10, 10, 10, 11, 10, 10, 10, 10,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		12, 12, 12, 12, 12, 12, 12, 12, 13, 12, 12, 12,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	int currentState = 1;
+
+	// iterates through string
+	for (string::iterator i = s.begin(); i != s.end(); i++) {
+		switch(true) {
+			case (isalpha(*i)):
+				currentState = fsmTable[currentState-1][0];
+				break;
+			case (isdigit(*i)):
+				currentState = fsmTable[currentState-1][1];
+				break;
+			case (*i == '('):
+				currentState = fsmTable[currentState-1][2];
+				break;
+			case (*i == ')'):
+				currentState = fsmTable[currentState-1][3];
+				break;
+			case (*i == '{'):
+				currentState = fsmTable[currentState-1][4];
+				break;
+			case (*i == '}'):
+				currentState = fsmTable[currentState-1][5];
+				break;
+			case (*i == '['):
+				currentState = fsmTable[currentState-1][6];
+				break;
+			case (*i == ']'):
+				currentState = fsmTable[currentState-1][7];
+				break;
+			case (*i == '!'):
+				currentState = fsmTable[currentState-1][8];
+				break;
+			case (*i == '.'):
+				currentState = fsmTable[currentState-1][9];
+				break;
+			case (*i == ' '):
+				currentState = fsmTable[currentState-1][10];
+				break;
+			default:
+				currentState = fsmTable[currentState-1][11];
+				break;
+		}
+
+	}
+	if (currentState == 3 || currentState == 5 || currentState == 7 || currentState == 9
+			|| currentState == 11 || currentState == 13 || currentState == 14) {
+		return true;
+	}
+	return false;
 }
 
 /* FINITE STATE MACHINE
@@ -167,20 +232,21 @@ bool fsm(string s) {
  * q0 = 1
  * F* =  {3, 5, 7, 9, 11, 13, 14}
  *
- * Table:
+ * TABLE:
  *       l  d  (  )  {  }  [  ]  !  .  sp p
- * 1   | 2  4  6  14 8  14 10 14 12 14 1 14 
- * 2   | 2  2  3  3  3  3  3  3  3  3  3  3 
- * 3*  | 1  1  1  1  1  1  1  1  1  1  1  1
- * 4   | 5  4  5  5  5  5  5  5  5  4  5  5
- * 5*  | 1  1  1  1  1  1  1  1  1  1  1  1
- * 6   | 6  6  6  7  6  6  6  6  6  6  6  6
- * 7*  | 1  1  1  1  1  1  1  1  1  1  1  1
- * 8   | 8  8  8  8  8  9  8  8  8  8  8  8
- * 9*  | 1  1  1  1  1  1  1  1  1  1  1  1
- * 10  | 10 10 10 10 10 10 10 11 10 10 10 10
- * 11* | 1  1  1  1  1  1  1  1  1  1  1  1
- * 12  | 12 12 12 12 12 12 12 12 13 12 12 12
- * 13* | 1  1  1  1  1  1  1  1  1  1  1  1
- * 14* | 1  1  1  1  1  1  1  1  1  1  1  1
+ * 1   | 2  4  6  14 8  14 10 14 12 14 1 14	STARTING STATE
+ * 2   | 2  2  3  3  3  3  3  3  3  3  3  3 	IN IDENTIFIER
+ * 3*  | 1  1  1  1  1  1  1  1  1  1  1  1	END OF IDENTIFIER
+ * 4   | 5  4  5  5  5  5  5  5  5  4  5  5	IN NUMBER
+ * 5*  | 1  1  1  1  1  1  1  1  1  1  1  1	END NUMBER
+ * 6   | 6  6  6  7  6  6  6  6  6  6  6  6	IN ()
+ * 7*  | 1  1  1  1  1  1  1  1  1  1  1  1	END OF ()
+ * 8   | 8  8  8  8  8  9  8  8  8  8  8  8	IN {}
+ * 9*  | 1  1  1  1  1  1  1  1  1  1  1  1	END OF {}
+ * 10  | 10 10 10 10 10 10 10 11 10 10 10 10	IN []
+ * 11* | 1  1  1  1  1  1  1  1  1  1  1  1	END OF []
+ * 12  | 12 12 12 12 12 12 12 12 13 12 12 12	IN ! COMMENT
+ * 13* | 1  1  1  1  1  1  1  1  1  1  1  1	END ! COMMENT
+ * 14* | 1  1  1  1  1  1  1  1  1  1  1  1	GENERAL PUNCTUATION
+ *
  */
