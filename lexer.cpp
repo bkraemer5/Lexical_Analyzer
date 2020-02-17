@@ -12,6 +12,8 @@ void printStringToken(string key, string lex);
 // prints string tokens & char lexemes
 void printCharToken(string key, char lex);
 
+// Reads string of tokens & implements FSM
+// returns true if ending at final state, false otherwise
 bool fsm(string s);
 
 int main() {
@@ -41,7 +43,10 @@ int main() {
 
 	// parse file for tokens/lexemes
 	while (getline(sourceCode, line)) {
+
+		// adds each line to string of tokens to create an argument for FSM
 		tokens = tokens + line;
+
 		for (string::iterator i = line.begin(); i != line.end(); i++) {
 			
 			// checks if character is alphabetic
@@ -143,8 +148,9 @@ int main() {
 			}
 		}
 	}
-
-
+	
+	// Call for FSM:
+	// cout << fsm(tokens);
 
 	return 0;
 }
@@ -177,44 +183,42 @@ bool fsm(string s) {
 	int currentState = 1;
 
 	// iterates through string
-	for (string::iterator i = s.begin(); i != s.end(); i++) {
-		switch(true) {
-			case (isalpha(*i)):
-				currentState = fsmTable[currentState-1][0];
-				break;
-			case (isdigit(*i)):
-				currentState = fsmTable[currentState-1][1];
-				break;
-			case (*i == '('):
-				currentState = fsmTable[currentState-1][2];
-				break;
-			case (*i == ')'):
-				currentState = fsmTable[currentState-1][3];
-				break;
-			case (*i == '{'):
-				currentState = fsmTable[currentState-1][4];
-				break;
-			case (*i == '}'):
-				currentState = fsmTable[currentState-1][5];
-				break;
-			case (*i == '['):
-				currentState = fsmTable[currentState-1][6];
-				break;
-			case (*i == ']'):
-				currentState = fsmTable[currentState-1][7];
-				break;
-			case (*i == '!'):
-				currentState = fsmTable[currentState-1][8];
-				break;
-			case (*i == '.'):
-				currentState = fsmTable[currentState-1][9];
-				break;
-			case (*i == ' '):
-				currentState = fsmTable[currentState-1][10];
-				break;
-			default:
-				currentState = fsmTable[currentState-1][11];
-				break;
+	for (string::iterator k = s.begin(); k != s.end(); k++) {
+		if (isalpha(*k)) {
+			currentState = fsmTable[currentState-1][0];
+		}
+		else if (isdigit(*k)) {
+			currentState = fsmTable[currentState-1][1];
+		}
+		else if (*k == '(') {
+			currentState = fsmTable[currentState-1][2];
+		}
+		else if (*k == ')') {
+			currentState = fsmTable[currentState-1][3];
+		}
+		else if (*k == '{') {
+			currentState = fsmTable[currentState-1][4];
+		}
+		else if (*k == '}') {
+			currentState = fsmTable[currentState-1][5];
+		}
+		else if (*k == '[') {
+			currentState = fsmTable[currentState-1][6];
+		}
+		else if (*k == ']') {
+			currentState = fsmTable[currentState-1][7];
+		}
+		else if (*k == '!') {
+			currentState = fsmTable[currentState-1][8];
+		}
+		else if (*k == '.') {
+			currentState = fsmTable[currentState-1][9];
+		}
+		else if (*k == ' ') {
+			currentState = fsmTable[currentState-1][10];
+		}
+		else {
+			currentState = fsmTable[currentState-1][11];
 		}
 
 	}
